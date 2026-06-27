@@ -1,6 +1,7 @@
 #include "TrackerTab.h"
 #include "PieChartWidget.h"
 #include "DataStore.h"
+#include "InputValidator.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -92,17 +93,21 @@ void TrackerTab::onAddEntry()
     QString title  = m_titleEdit->text().trimmed();
     QString amtStr = m_amountEdit->text().trimmed();
 
-    if (title.isEmpty()) {
-        QMessageBox::warning(this, "Missing title", "Please enter a title for this spending.");
+    // Validate title
+    ValidationResult titleResult = InputValidator::validateTitle(title);
+    if (!titleResult.isValid) {
+        QMessageBox::warning(this, "Invalid Title", titleResult.errorMessage);
         m_titleEdit->setFocus();
+        m_titleEdit->selectAll();
         return;
     }
 
-    bool ok;
-    double amount = amtStr.toDouble(&ok);
-    if (!ok || amount <= 0) {
-        QMessageBox::warning(this, "Invalid amount", "Please enter a positive number for the amount.");
+    // Validate amount
+    ValidationResult amountResult = InputValidator::validateAmount(amtStr);
+    if (!amountResult.isValid) {
+        QMessageBox::warning(this, "Invalid Amount", amountResult.errorMessage);
         m_amountEdit->setFocus();
+        m_amountEdit->selectAll();
         return;
     }
 

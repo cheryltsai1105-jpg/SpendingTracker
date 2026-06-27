@@ -40,6 +40,7 @@ add_executable(SpendingTracker
     BarChartWidget.cpp
     GoalsTab.cpp
     HistoryTab.cpp
+    InputValidator.cpp
 )
 
 if(MSVC)
